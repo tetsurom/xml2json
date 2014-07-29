@@ -7,7 +7,6 @@ How to build
 ```
 git clone git@github.com:tetsurom/xml2json.git
 cd xml2json
-mkdir bin
 ant
 ```
 
