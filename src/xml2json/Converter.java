@@ -33,7 +33,7 @@ public class Converter extends DefaultHandler {
 		if(text.length() > 0){
 			stream.print("{ \"name\": \"@text\", \"value\": \"");
 			stream.print(text);
-			stream.print("\" }");
+			stream.println("\" },");
 		}
 	}
 
