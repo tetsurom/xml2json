@@ -6,11 +6,20 @@ import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class Converter extends DefaultHandler {
+	private boolean isFirstChild = false;
+	private PrintStream stream;
+
+	public void setPrintStream(PrintStream fileoutStream) {
+		this.stream = fileoutStream;
+	}
+	
 	public void startDocument() {
-		stream.println("{ \"name\": \"@document\", \"contents\": [");
+		stream.print("{ \"name\": \"@document\", \"contents\": [");
+		isFirstChild = true;
 	}
 
 	public void startElement(String uri, String localName, String qName, Attributes attributes) {
+		stream.println(isFirstChild ? "" : ",");
 		stream.print("{ \"name\": \"");
 		stream.print(qName);
 		stream.print("\", \"attributes\": {");
@@ -25,29 +34,28 @@ public class Converter extends DefaultHandler {
 				stream.print(",");
 			}
 		}
-		stream.println("}, \"contents\": [");
+		stream.print("}, \"contents\": [");
+		isFirstChild = true;
 	}
 
 	public void characters(char[] ch, int offset, int length) {
 		String text = new String(ch, offset, length).trim();
 		if(text.length() > 0){
+			stream.println(isFirstChild ? "" : ",");
 			stream.print("{ \"name\": \"@text\", \"value\": \"");
 			stream.print(text);
-			stream.println("\" },");
+			stream.print("\" }");
+			isFirstChild = false;
 		}
 	}
 
 	public void endElement(String uri, String localName, String qName) {
-		stream.println("] },");
+		stream.print("] }");
+		isFirstChild = false;
 	}
 
 	public void endDocument() {
 		stream.println("] }");
-	}
-	
-	PrintStream stream;
-
-	public void setPrintStream(PrintStream fileoutStream) {
-		this.stream = fileoutStream;
+		isFirstChild = false;
 	}
 }
